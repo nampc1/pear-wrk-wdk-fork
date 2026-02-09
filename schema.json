@@ -1,19 +1,5 @@
 {
   "version": 1,
-  "config": {
-    "walletModules": {
-      "evmErc4337": {
-        "modulePath": "@tetherto/wdk-wallet-evm-erc-4337",
-        "networks": ["ethereum", "polygon", "arbitrum", "plasma", "sepolia"]
-      },
-      "spark": {
-        "modulePath": "@tetherto/wdk-wallet-spark",
-        "networks": ["spark"]
-      }
-    },
-    "requiredNetworks": ["ethereum", "polygon", "arbitrum", "plasma", "sepolia","spark"],
-    "preloadModules": ["@buildonspark/spark-frost-bare-addon"]
-  },
   "schema": [
     {
       "name": "log-type-enum",
@@ -133,6 +119,12 @@
           "required": false,
           "type": "string",
           "version": 1
+        },
+        {
+          "name": "options",
+          "required": false,
+          "type": "string",
+          "version": 1
         }
       ]
     },
@@ -144,6 +136,65 @@
       "fields": [
         {
           "name": "result",
+          "type": "string",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "name": "registerWallet-request",
+      "namespace": "wdk-core",
+      "compact": false,
+      "flagsPosition": -1,
+      "fields": [
+        {
+          "name": "config",
+          "required": true,
+          "type": "string",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "name": "registerWallet-response",
+      "namespace": "wdk-core",
+      "compact": false,
+      "flagsPosition": 0,
+      "fields": [
+        {
+          "name": "status",
+          "type": "string",
+          "version": 1
+        },
+        {
+          "name": "blockchains",
+          "type": "string",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "name": "registerProtocol-request",
+      "namespace": "wdk-core",
+      "compact": false,
+      "flagsPosition": -1,
+      "fields": [
+        {
+          "name": "config",
+          "required": true,
+          "type": "string",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "name": "registerProtocol-response",
+      "namespace": "wdk-core",
+      "compact": false,
+      "flagsPosition": 0,
+      "fields": [
+        {
+          "name": "status",
           "type": "string",
           "version": 1
         }
