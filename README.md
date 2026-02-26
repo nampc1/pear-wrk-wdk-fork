@@ -157,5 +157,4 @@ const address = await hrpc.callMethod({
 *   **`registerProtocol(config)`**: Add support for a new protocol (e.g., DeFi adapter) at runtime.
 
 ## License
-
-Apache-2.0
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
