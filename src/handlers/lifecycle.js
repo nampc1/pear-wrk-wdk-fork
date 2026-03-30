@@ -50,15 +50,10 @@ async function initializeWdkHandler (init, context) {
       validateNonEmptyString(init.config, 'config')
       workletConfig = validateJSON(init.config, 'config')
 
-      // Validate encrypted seed and encryption key
-      if (!init.encryptionKey || !init.encryptedSeed) {
-        throw createErrorWithCode(
-          '(encryptionKey + encryptedSeed) must be provided',
-          ERROR_CODES.BAD_REQUEST
-        )
+      if (init.encryptionKey && init.encryptedSeed) {
+        validateBase64(init.encryptionKey, 'encryptionKey')
+        validateBase64(init.encryptedSeed, 'encryptedSeed')
       }
-      validateBase64(init.encryptionKey, 'encryptionKey')
-      validateBase64(init.encryptedSeed, 'encryptedSeed')
     },
     'Init'
   )
@@ -74,19 +69,28 @@ async function initializeWdkHandler (init, context) {
       ERROR_CODES.BAD_REQUEST
     )
   }
+  
+  if (init.encryptionKey && init.encryptedSeed) {
+    logger.info('Initializing WDK with encrypted seed')
+    let decryptedSeedBuffer
+    try {
+      decryptedSeedBuffer = decrypt(init.encryptedSeed, init.encryptionKey)
+    } catch (error) {
+      throw createErrorWithCode(
+        `Failed to decrypt seed: ${error.message}`,
+        ERROR_CODES.BAD_REQUEST
+      )
+    }
 
-  logger.info('Initializing WDK with encrypted seed')
-  let decryptedSeedBuffer
-  try {
-    decryptedSeedBuffer = decrypt(init.encryptedSeed, init.encryptionKey)
-  } catch (error) {
+    context.wdk = new WDK(decryptedSeedBuffer)
+  }
+  
+  if (!context.wdk) {
     throw createErrorWithCode(
-      `Failed to decrypt seed: ${error.message}`,
-      ERROR_CODES.BAD_REQUEST
+      'WDK must be initialized with a seed before module registration.',
+      ERROR_CODES.WDK_MANAGER_INIT
     )
   }
-
-  context.wdk = new WDK(decryptedSeedBuffer)
 
   for (const networkConfig of Object.values(workletConfig.networks)) {
     const networkName = networkConfig.blockchain
