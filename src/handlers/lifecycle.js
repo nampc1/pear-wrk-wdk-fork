@@ -50,7 +50,16 @@ async function initializeWdkHandler (init, context) {
       validateNonEmptyString(init.config, 'config')
       workletConfig = validateJSON(init.config, 'config')
 
-      if (init.encryptionKey && init.encryptedSeed) {
+      const isValidParams = (init.encryptedSeed && init.encryptionKey) || (!init.encryptedSeed && !init.encryptionKey)
+
+      if (!isValidParams) {
+        throw createErrorWithCode(
+          'encryptionKey and encryptedSeed must be provided or omitted',
+          ERROR_CODES.BAD_REQUEST
+        )
+      }
+
+      if (init.encryptedSeed && init.encryptionKey) {
         validateBase64(init.encryptionKey, 'encryptionKey')
         validateBase64(init.encryptedSeed, 'encryptedSeed')
       }
